@@ -336,8 +336,11 @@
 
     const url = "https://api.whatsapp.com/send?phone=" + SHOP.whatsapp +
       "&text=" + encodeURIComponent(buildMessage(d));
-    const win = window.open(url, "_blank", "noopener");
-    if (!win) window.location.href = url;
+    // Open WhatsApp exactly once. window.open() with "noopener" always returns null,
+    // so it can't tell a blocked popup apart; open normally and cut the opener link instead.
+    const win = window.open(url, "_blank");
+    if (win) win.opener = null;
+    else window.location.href = url; // popup blocked: go there in this tab
   }
 
   // ---------- Wire up ----------
