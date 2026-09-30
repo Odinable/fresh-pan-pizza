@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fresh Pan Pizza, Multan | Order on WhatsApp</title>
+<meta name="description" content="Pizza, deals, roll parathas, burgers, shawarma, pasta, wings and broast from Fresh Pan Pizza, Garden Town, Taunsa Road, Multan. Open 2 PM to 2 AM. Order online on WhatsApp.">
+<meta name="theme-color" content="#14110e">
+<link rel="canonical" href="https://freshpanpizza.netlify.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Fresh Pan Pizza">
+<meta property="og:title" content="Fresh Pan Pizza, Multan: Order on WhatsApp">
+<meta property="og:description" content="Deals from Rs 399. Pizza, parathas, burgers, shawarma, pasta, wings and broast. Open 2 PM to 2 AM, fast home delivery in Multan.">
+<meta property="og:url" content="https://freshpanpizza.netlify.app/">
+<meta property="og:image" content="https://freshpanpizza.netlify.app/img/og-logo.jpg">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="600">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="preload" as="image" href="img/hero.webp">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-inner">
+    <a class="brand" href="#top" aria-label="Fresh Pan Pizza, back to top">
+      <img src="img/logo.webp" alt="" width="44" height="44">
+      <span class="brand-text"><span class="brand-small">Fresh</span> <span class="brand-big">PAN</span> <span class="brand-small">Pizza</span></span>
+    </a>
+    <a class="call" href="tel:+923176702161">Call</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <div class="hero-copy">
+        <p class="status" id="openStatus" hidden></p>
+        <h1>Hot pan pizza,<br>ordered in a minute.</h1>
+        <p class="lead">Pick your items, add your address, and send the order to us on WhatsApp. No sign-up needed.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#deals">See deals from Rs 399</a>
+          <a class="btn btn-ghost" href="#info">Hours &amp; location</a>
+        </div>
+        <ul class="perks">
+          <li>Fast home delivery</li>
+          <li>Open 2 PM – 2 AM</li>
+          <li>Garden Town, Multan</li>
+        </ul>
+      </div>
+      <img class="hero-logo" src="img/logo.webp" alt="Fresh Pan Pizza logo: Hot, Fresh &amp; Delicious" width="320" height="320">
+    </div>
+  </section>
+
+  <nav class="cats" aria-label="Menu categories">
+    <div class="wrap cats-inner" id="catNav"></div>
+  </nav>
+
+  <div class="wrap" id="menu"></div>
+
+  <section class="info" id="info">
+    <div class="wrap">
+      <h2>Find us</h2>
+      <div class="info-grid">
+        <div>
+          <h3>Address</h3>
+          <p id="shopAddress"></p>
+          <a class="map-link" id="mapLink" target="_blank" rel="noopener">Open in Google Maps →</a>
+        </div>
+        <div>
+          <h3>Hours</h3>
+          <p>Every day, 2 PM – 2 AM</p>
+          <p class="muted">Dine-in · Drive-through · Home delivery</p>
+        </div>
+        <div>
+          <h3>Fast home delivery</h3>
+          <ul class="phones" id="shopPhones"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <span>© <span id="year"></span> Fresh Pan Pizza, Multan</span>
+    <span class="credit">Food photos: Unsplash</span>
+  </div>
+</footer>
+
+<!-- Sticky cart bar -->
+<div class="cartbar" id="cartbar" hidden>
+  <div class="wrap cartbar-inner">
+    <div>
+      <span class="cartbar-count" id="barCount"></span>
+      <strong class="cartbar-total" id="barTotal"></strong>
+    </div>
+    <button class="btn btn-primary" id="openCart" type="button">View order</button>
+  </div>
+</div>
+
+<!-- Order panel -->
+<dialog class="panel" id="cartPanel" aria-labelledby="panelTitle">
+  <form method="dialog" class="panel-head">
+    <h2 id="panelTitle">Your order</h2>
+    <button class="icon-btn" aria-label="Close" value="close">✕</button>
+  </form>
+
+  <div class="panel-body">
+    <ul class="lines" id="cartLines"></ul>
+    <p class="empty" id="cartEmpty">Your order is empty. Add something from the menu.</p>
+
+    <div class="total-row">
+      <span>Total</span>
+      <strong id="cartTotal">Rs 0</strong>
+    </div>
+
+    <form class="details" id="details" novalidate>
+      <h3>Delivery details</h3>
+      <label>Name
+        <input id="custName" name="name" autocomplete="name" required>
+      </label>
+      <label>Phone
+        <input id="custPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="03xx-xxxxxxx" required>
+      </label>
+      <label>Delivery address
+        <textarea id="custAddress" name="address" rows="2" autocomplete="street-address" placeholder="House no., street, area" required></textarea>
+      </label>
+      <label>Notes <span class="opt">(optional)</span>
+        <textarea id="custNotes" name="notes" rows="2" placeholder="e.g. pizza flavour for your deal, extra spicy"></textarea>
+      </label>
+      <p class="form-error" id="formError" role="alert"></p>
+      <p class="closed-note" id="closedNote" hidden>We're closed right now (open 2 PM – 2 AM). You can still send your order and we'll reply when we open.</p>
+      <button class="btn btn-wa" type="submit">Send order on WhatsApp</button>
+      <p class="fine">WhatsApp opens with your order typed in. Press <b>Send</b> there to place it. We'll confirm the total and delivery time in the chat.</p>
+    </form>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="menu-data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
