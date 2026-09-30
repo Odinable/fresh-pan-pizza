@@ -28,7 +28,13 @@
       <img src="img/logo.webp" alt="" width="44" height="44">
       <span class="brand-text"><span class="brand-small">Fresh</span> <span class="brand-big">PAN</span> <span class="brand-small">Pizza</span></span>
     </a>
-    <a class="call" href="tel:+923176702161">Call</a>
+    <div class="top-actions">
+      <p class="status status-sm" id="openStatusTop" hidden></p>
+      <a class="call" href="tel:+923176702161">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>
+        <span>Call</span>
+      </a>
+    </div>
   </div>
 </header>
 
@@ -37,19 +43,23 @@
     <div class="wrap hero-inner">
       <div class="hero-copy">
         <p class="status" id="openStatus" hidden></p>
-        <h1>Hot pan pizza,<br>ordered in a minute.</h1>
+        <h1>Hot pan pizza,<br><span class="hl">ordered in a minute.</span></h1>
         <p class="lead">Pick your items, add your address, and send the order to us on WhatsApp. No sign-up needed.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="#deals">See deals from Rs 399</a>
           <a class="btn btn-ghost" href="#info">Hours &amp; location</a>
         </div>
-        <ul class="perks">
-          <li>Fast home delivery</li>
-          <li>Open 2 PM – 2 AM</li>
-          <li>Garden Town, Multan</li>
-        </ul>
       </div>
       <img class="hero-logo" src="img/logo.webp" alt="Fresh Pan Pizza logo: Hot, Fresh &amp; Delicious" width="320" height="320">
+    </div>
+
+    <div class="wrap">
+      <ul class="perks">
+        <li><b>Fast</b> home delivery</li>
+        <li><b>2 PM – 2 AM</b> every day</li>
+        <li><b>Garden Town</b>, Multan</li>
+      </ul>
+      <nav class="tiles" id="catTiles" aria-label="Browse the menu"></nav>
     </div>
   </section>
 
@@ -57,23 +67,41 @@
     <div class="wrap cats-inner" id="catNav"></div>
   </nav>
 
-  <div class="wrap" id="menu"></div>
+  <div class="wrap layout">
+    <div id="menu"></div>
+
+    <aside class="side-cart" aria-labelledby="sideTitle">
+      <div class="side-card">
+        <h2 id="sideTitle">Your order</h2>
+        <ul class="lines" id="sideLines"></ul>
+        <p class="empty" id="sideEmpty">Nothing here yet. Tap a price to add it.</p>
+        <div class="total-row">
+          <span>Total</span>
+          <strong id="sideTotal">Rs 0</strong>
+        </div>
+        <button class="btn btn-wa" id="sideCheckout" type="button" disabled>Checkout</button>
+      </div>
+    </aside>
+  </div>
 
   <section class="info" id="info">
     <div class="wrap">
       <h2>Find us</h2>
       <div class="info-grid">
-        <div>
+        <div class="info-card">
+          <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
           <h3>Address</h3>
           <p id="shopAddress"></p>
           <a class="map-link" id="mapLink" target="_blank" rel="noopener">Open in Google Maps →</a>
         </div>
-        <div>
+        <div class="info-card">
+          <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 10.4 3.2 3.2-1.4 1.4-3.8-3.8V6h2z"/></svg>
           <h3>Hours</h3>
           <p>Every day, 2 PM – 2 AM</p>
           <p class="muted">Dine-in · Drive-through · Home delivery</p>
         </div>
-        <div>
+        <div class="info-card">
+          <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>
           <h3>Fast home delivery</h3>
           <ul class="phones" id="shopPhones"></ul>
         </div>
@@ -89,7 +117,7 @@
   </div>
 </footer>
 
-<!-- Sticky cart bar -->
+<!-- Sticky cart bar (phones and tablets) -->
 <div class="cartbar" id="cartbar" hidden>
   <div class="wrap cartbar-inner">
     <div>

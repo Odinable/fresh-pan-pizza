@@ -54,47 +54,130 @@
   );
 
   // ---------- Render menu ----------
+  function fromPrice(section, item) {
+    return item.prices ? Math.min.apply(null, item.prices) : item.price;
+  }
+
+  function renderCard(section, s, item, i) {
+    const sizes = item.sizes || section.sizes;
+    let actions;
+    if (sizes) {
+      actions = '<div class="sizes">' + sizes.map((size, z) =>
+        '<button type="button" class="size-btn" data-s="' + s + '" data-i="' + i + '" data-z="' + z + '"' +
+        ' aria-label="Add ' + esc(item.name) + ", " + esc(size) + ", " + rs(item.prices[z]) + '">' +
+        '<span class="size-name">' + esc(size) + "</span>" +
+        '<span class="size-price">' + rs(item.prices[z]) + "</span></button>"
+      ).join("") + "</div>";
+    } else {
+      actions =
+        '<div class="single">' +
+        '<span class="price">' + rs(item.price) + "</span>" +
+        '<button type="button" class="add-btn" data-s="' + s + '" data-i="' + i + '" data-z="0"' +
+        ' aria-label="Add ' + esc(item.name) + '">Add</button></div>';
+    }
+    const isDeal = section.id === "deals";
+    return (
+      '<article class="card' + (isDeal ? " card-deal" : "") + (item.featured ? " card-featured" : "") + '">' +
+      (item.featured ? '<span class="tag">Best for families</span>' : "") +
+      "<h3>" + esc(item.name) + "</h3>" +
+      (item.desc ? '<p class="desc">' + esc(item.desc) + "</p>" : "") +
+      actions + "</article>"
+    );
+  }
+
   function renderMenu() {
     $("catNav").innerHTML = MENU.map((section) =>
-      '<a href="#' + esc(section.id) + '">' + esc(section.title) + "</a>"
+      '<a href="#' + esc(section.id) + '" data-for="' + esc(section.id) + '">' + esc(section.title) + "</a>"
+    ).join("");
+
+    $("catTiles").innerHTML = MENU.map((section) =>
+      '<a class="tile" href="#' + esc(section.id) + '">' +
+      '<span class="tile-img"><img src="' + esc(section.image) + '" alt="" loading="lazy" decoding="async" width="80" height="80"></span>' +
+      '<span class="tile-name">' + esc(section.title) + "</span></a>"
     ).join("");
 
     $("menu").innerHTML = MENU.map((section, s) => {
-      const title = "<h2>" + esc(section.title) + "</h2>" +
-        (section.note ? '<span class="section-note">' + esc(section.note) + "</span>" : "");
-      const head = section.image
-        ? '<div class="banner"><img src="' + esc(section.image) + '" alt="" loading="lazy" decoding="async" width="800" height="350">' +
-          '<div class="banner-title">' + title + "</div></div>"
-        : '<div class="section-head">' + title + "</div>";
+      // Featured items (e.g. Family Deal) lead their row
+      const order = section.items.map((item, i) => i)
+        .sort((a, b) => (section.items[b].featured ? 1 : 0) - (section.items[a].featured ? 1 : 0));
+      const cards = order.map((i) => renderCard(section, s, section.items[i], i)).join("");
+      const minPrice = Math.min.apply(null, section.items.map((item) => fromPrice(section, item)));
+      const count = section.items.length;
 
-      const cards = section.items.map((item, i) => {
-        const sizes = item.sizes || section.sizes;
-        let actions;
-        if (sizes) {
-          actions = '<div class="sizes">' + sizes.map((size, z) =>
-            '<button type="button" class="size-btn" data-s="' + s + '" data-i="' + i + '" data-z="' + z + '"' +
-            ' aria-label="Add ' + esc(item.name) + ", " + esc(size) + ", " + rs(item.prices[z]) + '">' +
-            '<span class="size-name">' + esc(size) + "</span>" +
-            '<span class="size-price">' + rs(item.prices[z]) + "</span></button>"
-          ).join("") + "</div>";
-        } else {
-          actions =
-            '<div class="single">' +
-            '<span class="price">' + rs(item.price) + "</span>" +
-            '<button type="button" class="add-btn" data-s="' + s + '" data-i="' + i + '" data-z="0"' +
-            ' aria-label="Add ' + esc(item.name) + '">Add</button></div>';
-        }
-        return (
-          '<article class="card' + (section.id === "deals" ? " card-deal" : "") + (item.featured ? " card-featured" : "") + '">' +
-          "<h3>" + esc(item.name) + "</h3>" +
-          (item.desc ? '<p class="desc">' + esc(item.desc) + "</p>" : "") +
-          actions + "</article>"
-        );
-      }).join("");
-
-      return '<section class="menu-section" id="' + esc(section.id) + '">' + head +
-        '<div class="grid' + (section.sizes ? " grid-sized" : "") + '">' + cards + "</div></section>";
+      return (
+        '<section class="row" id="' + esc(section.id) + '" aria-labelledby="h-' + esc(section.id) + '">' +
+          '<header class="row-head">' +
+            '<img class="row-img" src="' + esc(section.image) + '" alt="" loading="lazy" decoding="async" width="800" height="350">' +
+            '<div class="row-title">' +
+              '<h2 id="h-' + esc(section.id) + '">' + esc(section.title) + "</h2>" +
+              '<p class="row-meta">' + count + (count === 1 ? " item" : " items") + " · from " + rs(minPrice) + "</p>" +
+            "</div>" +
+            '<div class="row-arrows">' +
+              '<button type="button" class="arrow" data-dir="-1" aria-label="Scroll ' + esc(section.title) + ' left" disabled>‹</button>' +
+              '<button type="button" class="arrow" data-dir="1" aria-label="Scroll ' + esc(section.title) + ' right">›</button>' +
+            "</div>" +
+          "</header>" +
+          '<div class="scroller" tabindex="0" role="group" aria-label="' + esc(section.title) + ' items">' + cards + "</div>" +
+        "</section>"
+      );
     }).join("");
+  }
+
+  // ---------- Row scrolling ----------
+  function updateArrows(row) {
+    const sc = row.querySelector(".scroller");
+    const max = sc.scrollWidth - sc.clientWidth;
+    const [prev, next] = row.querySelectorAll(".arrow");
+    prev.disabled = sc.scrollLeft <= 4;
+    next.disabled = sc.scrollLeft >= max - 4;
+    row.classList.toggle("fits", max <= 4);
+    sc.classList.toggle("at-end", sc.scrollLeft >= max - 4);
+  }
+
+  function initRows() {
+    document.querySelectorAll(".row").forEach((row) => {
+      const sc = row.querySelector(".scroller");
+      sc.addEventListener("scroll", () => updateArrows(row), { passive: true });
+      row.querySelectorAll(".arrow").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          sc.scrollBy({ left: +btn.dataset.dir * sc.clientWidth * 0.85, behavior: "smooth" });
+        });
+      });
+      updateArrows(row);
+    });
+    window.addEventListener("resize", () => document.querySelectorAll(".row").forEach(updateArrows));
+  }
+
+  // Highlight the category chip for the row in view
+  function initActiveChip() {
+    const nav = $("catNav");
+    const bar = document.querySelector(".cats");
+    const rows = [...document.querySelectorAll(".row")];
+    const chips = new Map([...nav.querySelectorAll("a")].map((a) => [a.dataset.for, a]));
+    let current = null;
+    let queued = false;
+
+    function update() {
+      queued = false;
+      // The active row is the last one whose top has passed the bottom of the sticky bars
+      const line = bar.getBoundingClientRect().bottom + 24;
+      let active = null;
+      rows.forEach((row) => { if (row.getBoundingClientRect().top <= line) active = row; });
+      const chip = active ? chips.get(active.id) : null;
+      if (chip === current) return;
+      if (current) current.classList.remove("active");
+      if (chip) {
+        chip.classList.add("active");
+        // Keep the active chip visible without moving the page
+        nav.scrollTo({ left: chip.offsetLeft - nav.clientWidth / 2 + chip.clientWidth / 2, behavior: "smooth" });
+      }
+      current = chip;
+    }
+
+    window.addEventListener("scroll", () => {
+      if (!queued) { queued = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    update();
   }
 
   // ---------- Cart ----------
@@ -122,15 +205,8 @@
     return { count, total };
   }
 
-  function renderCart() {
-    const { count, total } = totals();
-
-    $("cartbar").hidden = count === 0;
-    document.body.classList.toggle("has-cart", count > 0);
-    $("barCount").textContent = count + (count === 1 ? " item" : " items");
-    $("barTotal").textContent = rs(total);
-
-    $("cartLines").innerHTML = cart.map(([key, qty]) => {
+  function linesHtml() {
+    return cart.map(([key, qty]) => {
       const entry = catalog.get(key);
       return (
         '<li class="line">' +
@@ -145,9 +221,25 @@
         "</li>"
       );
     }).join("");
+  }
 
+  function renderCart() {
+    const { count, total } = totals();
+    const html = linesHtml();
+
+    $("cartbar").hidden = count === 0;
+    document.body.classList.toggle("has-cart", count > 0);
+    $("barCount").textContent = count + (count === 1 ? " item" : " items");
+    $("barTotal").textContent = rs(total);
+
+    $("cartLines").innerHTML = html;
     $("cartEmpty").hidden = count > 0;
     $("cartTotal").textContent = rs(total);
+
+    $("sideLines").innerHTML = html;
+    $("sideEmpty").hidden = count > 0;
+    $("sideTotal").textContent = rs(total);
+    $("sideCheckout").disabled = count === 0;
   }
 
   // ---------- Toast ----------
@@ -180,13 +272,16 @@
 
   function renderStatus() {
     const open = isOpenNow();
-    const el = $("openStatus");
     if (open === null) return;
-    el.hidden = false;
-    el.classList.toggle("is-open", open);
-    el.textContent = open
+    const text = open
       ? "Open now · until " + hourLabel(SHOP.closes)
       : "Closed now · opens at " + hourLabel(SHOP.opens);
+    ["openStatus", "openStatusTop"].forEach((id) => {
+      const el = $(id);
+      el.hidden = false;
+      el.classList.toggle("is-open", open);
+      el.textContent = id === "openStatusTop" ? (open ? "Open now" : "Closed") : text;
+    });
     $("closedNote").hidden = open;
   }
 
@@ -251,6 +346,8 @@
     renderCart();
     renderStatus();
     setInterval(renderStatus, 60000);
+    initRows();
+    initActiveChip();
 
     $("shopAddress").textContent = SHOP.address;
     $("mapLink").href = SHOP.mapsUrl;
@@ -272,20 +369,27 @@
       if (!btn) return;
       const key = keyFor(+btn.dataset.s, +btn.dataset.i, +btn.dataset.z);
       changeQty(key, 1);
+      btn.classList.remove("added");
+      void btn.offsetWidth; // restart the animation
+      btn.classList.add("added");
       toast("Added " + catalog.get(key).label.split(":")[0]);
     });
 
-    $("cartLines").addEventListener("click", (e) => {
+    const onStep = (e) => {
       const btn = e.target.closest("button[data-key]");
       if (btn) changeQty(btn.dataset.key, +btn.dataset.d);
-    });
+    };
+    $("cartLines").addEventListener("click", onStep);
+    $("sideLines").addEventListener("click", onStep);
 
     const panel = $("cartPanel");
-    $("openCart").addEventListener("click", () => {
+    const openPanel = () => {
       $("formError").textContent = "";
       if (typeof panel.showModal === "function") panel.showModal();
       else panel.setAttribute("open", "");
-    });
+    };
+    $("openCart").addEventListener("click", openPanel);
+    $("sideCheckout").addEventListener("click", openPanel);
     // Close when tapping the backdrop
     panel.addEventListener("click", (e) => { if (e.target === panel) panel.close(); });
 
